@@ -8,11 +8,13 @@ on:
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 重要：必須顯式聲明寫入權限
     steps:
-      - uses: actions/checkout@v4  # 更新到 v4
+      - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v5 # 更新到 v5
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           
@@ -21,6 +23,9 @@ jobs:
           pip install playwright requests pandas
           playwright install chromium
           
+      - name: Run Monitor
+        run: python monitor.py
+        
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
@@ -29,7 +34,7 @@ jobs:
           # 檢查檔案是否存在
           if [ -f "sales_records.csv" ]; then
             git add sales_records.csv
-            # 在推送前嘗試與遠端同步，避免 rejected 錯誤
+            # 拉取遠端變更並 Rebase，解決 rejected 錯誤
             git pull --rebase origin main
             git commit -m "Update sales data [skip ci]" || echo "No changes to commit"
             git push origin main
