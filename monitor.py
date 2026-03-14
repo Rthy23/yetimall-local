@@ -26,7 +26,7 @@ async def main():
         logger.info(f"Navigating → {PRODUCT_URL}")
         await page.goto(PRODUCT_URL, wait_until="networkidle")
         
-        # 等待 15 秒讓 API 有機會被觸發與捕捉
+        # 等待 15 秒讓 API 有機會被觸發與捕捉？
         await asyncio.sleep(15) 
         
         await browser.close()
