@@ -29,8 +29,10 @@ jobs:
           # 檢查檔案是否存在
           if [ -f "sales_records.csv" ]; then
             git add sales_records.csv
+            # 在推送前嘗試與遠端同步，避免 rejected 錯誤
+            git pull --rebase origin main
             git commit -m "Update sales data [skip ci]" || echo "No changes to commit"
-            git push
+            git push origin main
           else
-            echo "CSV file was not created by monitor.py. Check monitor.py logs."
+            echo "CSV file was not created by monitor.py. Skipping commit."
           fi
