@@ -24,7 +24,11 @@ async def main():
         page.on("requestfinished", _handle_request)
         
         logger.info(f"Navigating → {PRODUCT_URL}")
-        await page.goto(PRODUCT_URL, wait_until="networkidle")
+        logger.info(f"Navigating → {PRODUCT_URL}")
+        await page.goto(PRODUCT_URL, wait_until="domcontentloaded")
+        
+        # 即使頁面還在載入資源，我們也給它 15 秒的時間去抓 API
+        await asyncio.sleep(15)
         
         # 等待 15 秒讓 API 有機會被觸發與捕捉？
         await asyncio.sleep(15) 
