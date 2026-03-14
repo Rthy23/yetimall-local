@@ -7,8 +7,11 @@ from config import PRODUCT_URL, ORDER_URL_KEYWORDS
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+# 在 monitor.py 的 _handle_request 函數開頭加入這行
 async def _handle_request(request):
+    print(f"DEBUG: Catching URL: {request.url}")  # 這會顯示在 GitHub Action 的 Log 裡
     if "yetimall.store" in request.url and any(kw in request.url for kw in ORDER_URL_KEYWORDS):
+        # ... 原有的處理邏輯 ...
         try:
             response = await request.response()
             if response:
