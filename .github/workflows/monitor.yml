@@ -21,23 +21,16 @@ jobs:
           pip install playwright requests pandas
           playwright install chromium
           
-      - name: Run Monitor
-        run: python monitor.py
-        
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          # 檢查檔案是否真的產生了
+          
+          # 檢查檔案是否存在
           if [ -f "sales_records.csv" ]; then
             git add sales_records.csv
-            git commit -m "Update sales data"
+            git commit -m "Update sales data [skip ci]" || echo "No changes to commit"
             git push
           else
             echo "CSV file was not created by monitor.py. Check monitor.py logs."
-          fi
-          
-            git push
-          else
-            echo "No CSV file generated this time, skipping commit."
           fi
