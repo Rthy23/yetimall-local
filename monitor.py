@@ -34,3 +34,18 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+async def _handle_request(request):
+    # 加上這行，我們會看到所有攔截到的網址
+    print(f"DEBUG: Processing URL: {request.url}") 
+    
+    if "yetimall.store" in request.url and any(kw in request.url for kw in ORDER_URL_KEYWORDS):
+        try:
+            response = await request.response()
+            if response:
+                data = await response.json()
+                processor.record_order(data)
+                print("DEBUG: DATA CAPTURED!")
+        except Exception as e:
+            print(f"DEBUG: Error: {e}")
+            
