@@ -4,7 +4,7 @@ from playwright.async_api import async_playwright
 import processor
 from config import PRODUCT_URL, ORDER_URL_KEYWORDS
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
 async def _handle_request(request):
