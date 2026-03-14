@@ -20,24 +20,23 @@ async def _handle_request(request):
 async def main():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
+        
+        # --- 在這裡設定 User-Agent ---
+        # 這樣設定後，網頁會以為你是來自真實 Chrome 瀏覽器的訪問
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+        )
+        # 接下來建立頁面時，使用這個 context
+        page = await context.new_page()
+        # ---------------------------
+        
         page.on("requestfinished", _handle_request)
         
         logger.info(f"Navigating → {PRODUCT_URL}")
-        logger.info(f"Navigating → {PRODUCT_URL}")
         await page.goto(PRODUCT_URL, wait_until="domcontentloaded")
         
-        # 即使頁面還在載入資源，我們也給它 15 秒的時間去抓 API
-        await asyncio.sleep(15)
-        
-        # 等待 15 秒讓 API 有機會被觸發與捕捉？
         await asyncio.sleep(15) 
-        
         await browser.close()
-        logger.info("Session finished.")
-
-if __name__ == "__main__":
-    asyncio.run(main())
 
 async def _handle_request(request):
     # 加上這行，我們會看到所有攔截到的網址
