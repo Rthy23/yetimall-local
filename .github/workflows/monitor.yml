@@ -31,10 +31,12 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-          # 檢查檔案是否存在
+          # 先設定遠端連結
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
           if [ -f "sales_records.csv" ]; then
             git add sales_records.csv
-            # 拉取遠端變更並 Rebase，解決 rejected 錯誤
+            # 強制同步，確保不發生衝突
             git pull --rebase origin main
             git commit -m "Update sales data [skip ci]" || echo "No changes to commit"
             git push origin main
