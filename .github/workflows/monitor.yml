@@ -1,11 +1,12 @@
-name: Monitor Yetimall
+name: Yetimall Monitor
+
 on:
   schedule:
-    - cron: '*/1 * * * *' # 設定每 1 分鐘執行一次
-  workflow_dispatch:      # 讓你可以在網頁上隨時手動點擊執行
+    - cron: '*/5 * * * *' # 設定每 5 分鐘執行一次
+  workflow_dispatch:      # 允許你在 GitHub 頁面手動點擊執行
 
 jobs:
-  run-monitor:
+  monitor:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +19,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install playwright requests pandas
-          playwright install-deps chromium
           playwright install chromium
           
       - name: Run Monitor
@@ -28,6 +28,11 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add sales_records.csv
-          git commit -m "Auto-update sales data" || echo "No changes to commit"
-          git push
+          # 檢查 CSV 是否存在，存在才進行提交，避免因檔案不存在而報錯
+          if [ -f "sales_records.csv" ]; then
+            git add sales_records.csv
+            git commit -m "Update sales data [skip ci]" || echo "No changes to commit"
+            git push
+          else
+            echo "No CSV file generated this time, skipping commit."
+          fi
