@@ -2,17 +2,17 @@ name: Yetimall Monitor
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # 設定每 5 分鐘執行一次
-  workflow_dispatch:      # 允許你在 GitHub 頁面手動點擊執行
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4  # 更新到 v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # 更新到 v5
         with:
           python-version: '3.11'
           
@@ -28,10 +28,15 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          # 檢查 CSV 是否存在，存在才進行提交，避免因檔案不存在而報錯
+          # 檢查檔案是否真的產生了
           if [ -f "sales_records.csv" ]; then
             git add sales_records.csv
-            git commit -m "Update sales data [skip ci]" || echo "No changes to commit"
+            git commit -m "Update sales data"
+            git push
+          else
+            echo "CSV file was not created by monitor.py. Check monitor.py logs."
+          fi
+          
             git push
           else
             echo "No CSV file generated this time, skipping commit."
