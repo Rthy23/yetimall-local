@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(m
 logger = logging.getLogger(__name__)
 
 async def _handle_request(request):
-    # 除錯用：顯示所有處理的網址
+    # 【關鍵】列印所有請求，如果 Log 沒東西，說明爬蟲連網頁都沒連上
     print(f"DEBUG: Processing URL: {request.url}") 
     
     if "yetimall.store" in request.url and any(kw in request.url for kw in ORDER_URL_KEYWORDS):
@@ -20,6 +20,8 @@ async def _handle_request(request):
                 print("DEBUG: DATA CAPTURED SUCCESSFULLY!")
         except Exception as e:
             print(f"DEBUG: Error in capturing data: {e}")
+
+# ... (main 函式保持使用 domcontentloaded 導航)
 
 async def main():
     async with async_playwright() as p:
